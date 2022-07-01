@@ -1,0 +1,34 @@
+local NoNos = {
+    "CHECKER_1",
+    "TeleportDetect",
+    "OneMoreTime"
+}
+Table ={
+WalkSpeed,JumpPower
+}
+
+local OldNameCall
+OldNameCall = hookmetamethod(game, "__namecall", function(...)
+    local Args = {...}
+    if (getnamecallmethod() == "FireServer"  and table.find(NoNos, Args[2])) then
+        return
+    end
+     if getnamecallmethod()=="IsStudio"  then
+        return true
+    end
+    if (not checkcaller() and getfenv(2).crash) then
+        hookfunction(getfenv(2).crash, function()
+            return nil
+        end)
+    end
+    return OldNameCall(...)
+end)
+
+local OldNameCall
+OldNameCall = hookmetamethod(game, "__newindex", function(A, B, C)
+    if not checkcaller() and A:IsA("Humanoid") and (B == "WalkSpeed" or B == "JumpPower") then
+        Table[B] = C
+        return
+    end
+    return OldNameCall(A, B, C)
+end)
